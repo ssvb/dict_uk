@@ -23,12 +23,25 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+
+    - name: Install Ispell and Crystal
+      run: |
+        sudo apt-get update && sudo apt-get install ispell crystal -y
+
     - name: Build with Gradle
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: test expand
 
+    - name: Generate suggested affixes
+      run: |
+        iconv -f utf-8 -t cp1251 out/words_spell.txt > out/words_spell.txt.cp1251
+        time findaffix -s out/words_spell.txt.cp1251 > out/words_spell_suffixes.txt.cp1251
+        iconv -f cp1251 -t utf-8 out/words_spell_suffixes.txt.cp1251 > out/words_spell_suffixes.txt
+
     - uses: actions/upload-artifact@v4
       with:
         name: words_spell
-        path: out/words_spell.txt
+        path: |
+          out/words_spell.txt
+          out/words_spell_suffixes.txt
