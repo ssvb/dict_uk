@@ -54,7 +54,7 @@ jobs:
         run: |
           iconv -f utf-8 -t cp1251 out/words.txt > out/words.txt.cp1251
           pwd
-          TMPDIR=. findaffix -s -M 7 -l 100 out/words.txt.cp1251 > out/words_suffixes.txt.cp1251
+          TMPDIR=. findaffix -s -l 100 out/words.txt.cp1251 > out/words_suffixes.txt.cp1251
           iconv -f cp1251 -t utf-8 out/words_suffixes.txt.cp1251 > out/words_suffixes.txt
 
       - uses: actions/upload-artifact@v4
