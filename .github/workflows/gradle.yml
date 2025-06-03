@@ -56,7 +56,7 @@ jobs:
           pwd
           echo TMPDIR=. findaffix -s -M 7 -l 100 out/words.txt.cp1251 > out/words_suffixes.txt.cp1251
           echo iconv -f cp1251 -t utf-8 out/words_suffixes.txt.cp1251 > out/words_suffixes.txt
-          TMPDIR=. findaffix -p -M 7 -l 100 out/words.txt.cp1251 > out/words_prefixes.txt.cp1251
+          TMPDIR=. findaffix -p -M 6 -l 100 out/words.txt.cp1251 > out/words_prefixes.txt.cp1251
           iconv -f cp1251 -t utf-8 out/words_prefixes.txt.cp1251 > out/words_prefixes.txt
 
       - uses: actions/upload-artifact@v4
