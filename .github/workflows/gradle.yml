@@ -52,9 +52,9 @@ jobs:
 
       - name: Generate affix suggestions
         run: |
-          iconv -f utf-8 -t cp1251 out/words.txt > out/words.txt.cp1251
+          iconv -f utf-8 -t cp1251 out/words_spell.txt > out/words_spell.txt.cp1251
           pwd
-          TMPDIR=. findaffix -s -e 2 -M 7 out/words.txt.cp1251 > out/words_suffixes.txt.cp1251
+          TMPDIR=. findaffix -s -e 2 -M 7 out/words_spell.txt.cp1251 > out/words_suffixes.txt.cp1251
           iconv -f cp1251 -t utf-8 out/words_suffixes.txt.cp1251 > out/words_suffixes.txt
           echo TMPDIR=. findaffix -p -e 2 -M 6 -l 100 out/words.txt.cp1251 > out/words_prefixes.txt.cp1251
           echo iconv -f cp1251 -t utf-8 out/words_prefixes.txt.cp1251 > out/words_prefixes.txt
