@@ -6,29 +6,63 @@
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
 name: Java CI with Gradle
-
-on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+on: [push, pull_request]
 
 permissions:
   contents: read
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-      with:
-        arguments: test expand
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+
+      - name: Report free space
+        run: |
+          echo "Free space:"
+          df -h
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: test expand
+
+      - name: Install Ispell
+        run: |
+          sudo apt-get update && sudo apt-get install ispell zstd -y
+          df -h
+
+      - name: Use the 'findaffix' tool from Ispell to find possible prefixes and suffixes
+        run: |
+          iconv -f utf-8 -t cp1251 out/words_spell.txt > out/words_spell.txt.cp1251
+          PATH=.:$PATH TMPDIR=. findaffix -s -e 2 -M 7 out/words_spell.txt.cp1251 | head -n 1000000 > out/words_suffixes.txt.cp1251
+          iconv -f cp1251 -t utf-8 out/words_suffixes.txt.cp1251 > out/words_suffixes.txt
+          PATH=.:$PATH TMPDIR=. findaffix -p -e 2 -M 7 out/words_spell.txt.cp1251 | head -n 1000000 > out/words_prefixes.txt.cp1251
+          iconv -f cp1251 -t utf-8 out/words_prefixes.txt.cp1251 > out/words_prefixes.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dict_uk_words
+          path: |
+            out/words.txt
+            out/words_spell.txt
+            out/words_suffixes.txt
+            out/words_prefixes.txt
