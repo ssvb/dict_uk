@@ -48,7 +48,7 @@ jobs:
 
       - name: Install Ispell
         run: |
-          sudo apt-get update && sudo apt-get install ispell zstd -y
+          sudo apt-get update && sudo apt-get install ispell zstd lz4 -y
           df -h
 
       - name: Use the 'findaffix' tool from Ispell to find possible prefixes and suffixes
