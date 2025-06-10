@@ -14,6 +14,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 600
     steps:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
@@ -53,10 +54,10 @@ jobs:
       - name: Use the 'findaffix' tool from Ispell to find possible prefixes and suffixes
         run: |
           iconv -f utf-8 -t cp1251 out/words.txt > out/words.txt.cp1251
-          PATH=.:$PATH TEMPDIR=. TMPDIR=. findaffix -s -e 2 -m 1 out/words.txt.cp1251 | head -n 2000000 > out/words_suffixes.txt.cp1251
+          PATH=.:$PATH TEMPDIR=. TMPDIR=. findaffix -s -e 2 -m 1 -l 40 out/words.txt.cp1251 | head -n 2000000 > out/words_suffixes.txt.cp1251
           iconv -f cp1251 -t utf-8 out/words_suffixes.txt.cp1251 > out/words_suffixes.txt
-          PATH=.:$PATH TEMPDIR=. TMPDIR=. findaffix -p -e 2 -m 1 out/words.txt.cp1251 | head -n 2000000 > out/words_prefixes.txt.cp1251
-          iconv -f cp1251 -t utf-8 out/words_prefixes.txt.cp1251 > out/words_prefixes.txt
+          echo PATH=.:$PATH TEMPDIR=. TMPDIR=. findaffix -p -e 2 -m 1 out/words.txt.cp1251 | head -n 2000000 > out/words_prefixes.txt.cp1251
+          echo iconv -f cp1251 -t utf-8 out/words_prefixes.txt.cp1251 > out/words_prefixes.txt
 
       - uses: actions/upload-artifact@v4
         with:

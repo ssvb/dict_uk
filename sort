@@ -1,2 +1,2 @@
 #!/usr/bin/bash
-/usr/bin/sort --compress-program=zstd "$@"
+/usr/bin/sort --compress-program=lz4 "$@"
